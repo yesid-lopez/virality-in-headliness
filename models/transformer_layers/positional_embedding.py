@@ -1,5 +1,5 @@
-import tensorflow as tf
 import numpy as np
+import tensorflow as tf
 import matplotlib.pyplot as plt
 from utils import create_look_ahead_mask, create_padding_mask
 
@@ -27,14 +27,11 @@ def positional_encoding(position, d_model):
 
 class PositionalEmbedding(tf.keras.layers.Layer):
     def __init__(self, token_embedding):
-        """ 
-        Layer for converting tokens ids into embeddings with positional information encoded 
-        and create padding and look ahead masks (optional) 
+        """
+        Layer for converting tokens ids into embeddings with positional information encoded
+        and create padding and look ahead masks (optional)
 
-        Args:
-          token_embedding(tf.keras.layers.Embedding): Embedding layer
-        Returns:
-          Embeddings with   
+        :param token_embedding: (tf.keras.layers.Embedding): Embedding layer
         """
         super(PositionalEmbedding, self).__init__()
         self.vocab_size = token_embedding.input_dim
