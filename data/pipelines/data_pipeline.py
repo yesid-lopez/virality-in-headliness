@@ -1,54 +1,65 @@
 import tensorflow as tf
-from data.generators.data_generator import single_data_generator
+from data.generators.pair import headlines_pair_generator
 
-def get_datasets_for_transformer(packages, batch_sizes, maxlen, encoder_fn, one_hot=False, classification=True,
-                                 regression=False, sorted=False, cased=False, enforced=False):
+
+def create_data_pipeline(packages_ids, batch_sizes, max_length, encoder_fn, one_hot=False, classification=True,
+                         cased=False, enforced=False):
     """
     Constructs a tf.data pipeline that yields batches of pairs of headlines with corresponding label (classification,
     regression).
 
-    :param packages: (dict) Dictionary
-    :param batch_sizes:
-    :param maxlen:
-    :param encoder_fn:
-    :param one_hot:
-    :param classification:
-    :param regression:
-    :param sorted:
-    :param cased:
-    :param enforced:
-    :return:
-    """
+    Args:
+        packages_ids(dict): dictionary that maps dataset split to list of packages ids. Keys: ["train". "val", "test"] 
+        batch_sizes(dict): dictionary that maps dataset split to batch size. Keys: ["train", "val", "test"]
+        max_length(int): Number of maximum tokens. Required for padding sequences.
+        encoder_fn(function): Function that maps a headline to its corresponding token list.
+                              Example "This is just a headline example" -> [89, 3, 45, 65, 40, 78]
+        one_hot(bool): whether to one hot encode class labels. Only valid if
+               classification = True, otherwise a ValueError will be raised
 
-    train_package_ids = packages['train_package_ids']
-    val_package_ids = packages['val_package_ids']
-    test_package_ids = packages["test_package_ids"]
+        classification(bool): bool, whether to yield labels as a binary classification task.
+                      1 ([0, 1] if one_hot=True) if first headline had more clicks than
+                      the second headline, 0 ([1, 0] if one_hot=True) otherwise.
+
+        cased(bool): If True, yielded headlines will not be lowercased.
+             Otherwise, all headlines will be lowercased,
+
+        enforced: If True, then the same pair of headlines are yielded twice,
+                but the second pair is swapped  with labels and features (if valid)
+                changed accordingly.
+    Returns:
+        train, val and test, all are BatchDataset instances.
+    """
 
     kwargs = {
         "one_hot": one_hot,
         "classification": classification,
-        "regression": regression,
-        "sorted": sorted,
+        "regression": False,
+        "sorted": False,
         "features": None,
         "cased": cased,
         "enforced": enforced
     }
 
+    train_package_ids = packages_ids["train"]
+    val_package_ids = packages_ids["val"]
+    test_package_ids = packages_ids["test"]
+
+    def pad(x):
+        return x + [0] * (max_length - len(x))
+
     def filter_label_and_tokenize(h1, h2, y_reg, y_class):
         tokens1, tokens2 = list(map(encoder_fn, [h1, h2]))
-        pad = lambda x: x + [0] * (maxlen - len(x))
-
-        h1 = pad(tokens1)
-        h2 = pad(tokens2)
+        padded_tokens1, padded_tokens2 = list(map(pad, [tokens1, tokens2]))
 
         inputs = {
-            "input_tokens_h1": h1,
-            "input_tokens_h2": h2
+            "input_tokens_h1": padded_tokens1,
+            "input_tokens_h2": padded_tokens1
         }
-        return inputs, y_class
+        return inputs, y_reg, y_class
 
     def single_data_generator_wrapper(ids, **kwargs):
-        generator = single_data_generator(ids, **kwargs)
+        generator = headlines_pair_generator(ids, **kwargs)
         for inputs in generator:
             inputs, y_class = filter_label_and_tokenize(*inputs)
             yield inputs, y_class
@@ -65,8 +76,8 @@ def get_datasets_for_transformer(packages, batch_sizes, maxlen, encoder_fn, one_
         return single_data_generator_wrapper(test_package_ids, **kwargs)
 
     output_signature = ({
-                            "input_tokens_h1": tf.TensorSpec(shape=(maxlen,), dtype=tf.int32),
-                            "input_tokens_h2": tf.TensorSpec(shape=(maxlen,), dtype=tf.int32)
+                            "input_tokens_h1": tf.TensorSpec(shape=(max_length,), dtype=tf.int32),
+                            "input_tokens_h2": tf.TensorSpec(shape=(max_length,), dtype=tf.int32)
                         },
                         tf.TensorSpec(shape=(), dtype=tf.int32)
     )
@@ -76,15 +87,15 @@ def get_datasets_for_transformer(packages, batch_sizes, maxlen, encoder_fn, one_
     }
 
     train_data = tf.data.Dataset.from_generator(train_generator, **kwarg) \
-                                .prefetch(tf.data.AUTOTUNE)\
-                                .batch(batch_sizes["train"])
+        .prefetch(tf.data.AUTOTUNE) \
+        .batch(batch_sizes["train"])
 
     val_data = tf.data.Dataset.from_generator(val_generator, **kwarg) \
-                              .prefetch(tf.data.AUTOTUNE) \
-                              .batch(batch_sizes["val"])
+        .prefetch(tf.data.AUTOTUNE) \
+        .batch(batch_sizes["val"])
 
     test_data = tf.data.Dataset.from_generator(test_generator, **kwarg) \
-                               .prefetch(tf.data.AUTOTUNE)\
-                               .batch(batch_sizes["test"])
+        .prefetch(tf.data.AUTOTUNE) \
+        .batch(batch_sizes["test"])
 
     return train_data, val_data, test_data
