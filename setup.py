@@ -8,7 +8,7 @@ with open('requirements.txt') as f:
 
 setup(name='headlines_project',
       version='0.0.5',
-      python_requires="==3.7.0",
+      python_requires=">=3.6.0,<=3.8.0",
       install_requires=required,
       description='Virality in headlines_project headlines_project',
       packages=packages_list,
