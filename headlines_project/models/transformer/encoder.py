@@ -1,7 +1,8 @@
-import tensorflow as tf
-from tensorflow.keras.layers import Dense, LayerNormalization, Dropout
-from positional_embedding import PositionalEmbedding
-from encoder_layer import TransformerEncoderLayer
+from headlines_project.lib import *
+from tensorflow.python.keras.layers import Dropout
+
+from .encoder_layer import TransformerEncoderLayer
+from .positional_embedding import PositionalEmbedding
 
 
 class TransformerEncoder(tf.keras.models.Model):

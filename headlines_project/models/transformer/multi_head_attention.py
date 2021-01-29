@@ -1,5 +1,5 @@
-import tensorflow as tf
-from tensorflow.keras.layers import Dense
+from headlines_project.lib import *
+from tensorflow.python.keras.layers import Dense
 
 
 def scaled_dot_product_attention(queries, keys, values, mask=None):
@@ -88,7 +88,7 @@ class MultiHeadAttention(tf.keras.layers.Layer):
 
         # scaled_att.shape == (batch_size, num_heads, seq_len_q, projection_dim)
         # att_weights.shape == (batch_size, num_heads, seq_len_q, seq_len_k)
-        scaled_att, att_weights = self.scaled_dot_product_attention(query, key, value, mask)
+        scaled_att, att_weights = scaled_dot_product_attention(query, key, value, mask)
 
         scaled_att = tf.transpose(scaled_att, perm=[0, 2, 1, 3])  # (batch_size, seq_len, num_heads, projection_dim)
 
@@ -97,3 +97,24 @@ class MultiHeadAttention(tf.keras.layers.Layer):
         output = self.combine_heads(concat_attention)  # (batch_size, seq_len_q, d_model)
 
         return output, att_weights
+
+
+if __name__ == "__main__":
+    from mask_utils import create_padding_mask, create_look_ahead_mask
+    import matplotlib.pyplot as plt
+
+    mha = MultiHeadAttention(d_model=100, num_heads=5)
+
+    tokens = tf.constant([[1, 2, 0, 0, 0],
+                          [3, 4, 5, 0, 0]])
+    x = tf.random.uniform((tokens.shape[0], tokens.shape[1], 100))  # (batch_size, maxlen, d_model)
+
+    padding_mask = create_padding_mask(tokens)
+    look_ahead_mask = create_look_ahead_mask(tokens.shape[1])
+    combined_mask = tf.maximum(padding_mask, look_ahead_mask)
+
+    print(padding_mask.shape)
+    out, att_weights = mha(x, x, x, mask=combined_mask)
+    plt.matshow(att_weights[1, 0, :, :])  # Visualize causal self-attention in the first head for the second sample
+    plt.show()
+    print(out.shape, att_weights.shape)

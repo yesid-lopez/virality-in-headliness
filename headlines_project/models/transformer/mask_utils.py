@@ -1,5 +1,4 @@
-import tensorflow as tf
-import matplotlib.pyplot as plt
+from headlines_project.lib import *
 
 
 def create_padding_mask(seq, padding_token=0):
@@ -37,13 +36,15 @@ def create_look_ahead_mask(max_length):
     return mask
 
 
-tokens = tf.constant([[743, 623, 0, 0, 0],
-                      [132, 243, 453, 0, 0],
-                      [365, 400, 290, 265, 509]])
-att_logits = tf.random.uniform((3, 1, 5, 5))  # Simulate att logits (batch_size, num_heads, maxlen, maxlen)
-padding_mask = create_padding_mask(tokens)
-print(f"padding_mask: {padding_mask}")
-masked_att_logits = att_logits + (padding_mask * -1e9)
-att_weights = tf.nn.softmax(masked_att_logits, axis=-1)
-plt.matshow(att_weights[1, 0, :, :].numpy())
-plt.show()
+if __name__ == "__main__":
+    import matplotlib.pyplot as plt
+    tokens = tf.constant([[743, 623, 0, 0, 0],
+                          [132, 243, 453, 0, 0],
+                          [365, 400, 290, 265, 509]])
+    att_logits = tf.random.uniform((3, 1, 5, 5))  # Simulate att logits (batch_size, num_heads, maxlen, maxlen)
+    padding_mask = create_padding_mask(tokens)
+    print(f"padding_mask: {padding_mask}")
+    masked_att_logits = att_logits + (padding_mask * -1e9)
+    att_weights = tf.nn.softmax(masked_att_logits, axis=-1)
+    plt.matshow(att_weights[1, 0, :, :].numpy())
+    plt.show()

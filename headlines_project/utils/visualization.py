@@ -1,5 +1,4 @@
-import tensorflow as tf
-import matplotlib.pyplot as plt
+from headlines_project.lib import *
 
 
 def plot_attention_weights(transformer_encoder, encoded_sentences_tokens, token_decoder, layer="encoder_layer_1"):
@@ -8,7 +7,7 @@ def plot_attention_weights(transformer_encoder, encoded_sentences_tokens, token_
 
     Args:
        transformer_encoder(TransformerEncoder): TransformerEncoder instance
-       encoded_sentences_tokens(numpy.array): (n, maxlen) of tokens where n is the number of headlines
+       encoded_sentences_tokens(numpy.array): (n, maxlen) of tokens where n is the number of headlines_project
        token_decoder(function): function that inputs a token and returns its corresponding word
        layer(str): name of the layer to extract attention weights from.
 
@@ -17,7 +16,7 @@ def plot_attention_weights(transformer_encoder, encoded_sentences_tokens, token_
       where each plot is a heatmap of attention weights
     """
     num_heads = transformer_encoder.num_heads
-    # number of headlines
+    # number of headlines_project
     n = int(tf.shape(encoded_sentences_tokens)[0])
 
     _, att_weights = transformer_encoder(encoded_sentences_tokens)

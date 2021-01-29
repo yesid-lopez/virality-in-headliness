@@ -1,7 +1,5 @@
-import numpy as np
-import tensorflow as tf
-import matplotlib.pyplot as plt
-from mask_utils import create_look_ahead_mask, create_padding_mask
+from headlines_project.lib import *
+from .mask_utils import create_look_ahead_mask, create_padding_mask
 
 
 def get_angles(pos, i, d_model):
@@ -64,14 +62,16 @@ class PositionalEmbedding(tf.keras.layers.Layer):
         return x, mask
 
 
-pos = 10000
-d_model = 100
-pos_encoding = positional_encoding(pos, d_model)
-print(pos_encoding.shape)
+if __name__ == "__main__":
+    import matplotlib.pyplot as plt
+    pos = 10000
+    d_model = 100
+    pos_encoding = positional_encoding(pos, d_model)
+    print(pos_encoding.shape)
 
-plt.pcolormesh(pos_encoding[0][:50, :], cmap='RdBu')
-plt.xlabel('Depth')
-plt.xlim((0, d_model))
-plt.ylabel('Position')
-plt.colorbar()
-plt.show()
+    plt.pcolormesh(pos_encoding[0][:50, :], cmap='RdBu')
+    plt.xlabel('Depth')
+    plt.xlim((0, d_model))
+    plt.ylabel('Position')
+    plt.colorbar()
+    plt.show()

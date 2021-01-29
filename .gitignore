@@ -121,11 +121,11 @@ env.bak/
 venv.bak/
 pythonenv*
 
-# Spyder project settings
+# Spyder headlines_project settings
 .spyderproject
 .spyproject
 
-# Rope project settings
+# Rope headlines_project settings
 .ropeproject
 
 # mkdocs documentation
@@ -244,7 +244,7 @@ dist
 
 # Gatsby files
 .cache/
-# Comment in the public line in if your project uses Gatsby and not Next.js
+# Comment in the public line in if your headlines_project uses Gatsby and not Next.js
 # https://nextjs.org/blog/next-9-1#public-directory-support
 # public
 

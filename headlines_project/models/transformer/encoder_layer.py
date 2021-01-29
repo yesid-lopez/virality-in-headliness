@@ -1,6 +1,7 @@
-import tensorflow as tf
+from headlines_project.lib import *
 from tensorflow.keras.layers import Dense, LayerNormalization, Dropout
-from multi_head_attention import MultiHeadAttention
+
+from .multi_head_attention import MultiHeadAttention
 
 
 class TransformerEncoderLayer(tf.keras.layers.Layer):

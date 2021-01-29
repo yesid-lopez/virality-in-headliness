@@ -1,6 +1,5 @@
-import tensorflow as tf
-import numpy as np
-import pandas as pd
+from headlines_project.lib import *
+
 
 @tf.autograph.experimental.do_not_convert
 def headlines_pair_generator(df, packages_ids, one_hot=False, classification=True, regression=False, sorted=False,
@@ -9,10 +8,10 @@ def headlines_pair_generator(df, packages_ids, one_hot=False, classification=Tru
     Yields a single training sample according to classification or regression task.
 
     Args:
-      df(pd.DataFrame): DataFrame from which headlines will be retrieved
+      df(pd.DataFrame): DataFrame from which headlines_project will be retrieved
 
       packages_ids(list): List of packages ids where pairs of
-                    headlines will be taken randomly
+                    headlines_project will be taken randomly
 
       one_hot(bool): whether to one hot encode class labels. Only valid if
                classification = True, otherwise a ValueError will be raised
@@ -30,11 +29,11 @@ def headlines_pair_generator(df, packages_ids, one_hot=False, classification=Tru
           regression and classification are not mutually exclusive, if both are set
           to True, then a tuple with
 
-      sorted(bool): If True, yielded headlines will be sorted in descending order by number of clicks.
-              Otherwise, yielded headlines will not have any particular order
+      sorted(bool): If True, yielded headlines_project will be sorted in descending order by number of clicks.
+              Otherwise, yielded headlines_project will not have any particular order
 
-      cased(bool): If True, yielded headlines will not be lowercased.
-             Otherwise, all headlines will be lowercased,
+      cased(bool): If True, yielded headlines_project will not be lowercased.
+             Otherwise, all headlines_project will be lowercased,
 
       features(list): default to None. List of names of the variables to include as features in df;
                 yielded elements will include a vector with the values of the features specified for each headline.
@@ -47,7 +46,7 @@ def headlines_pair_generator(df, packages_ids, one_hot=False, classification=Tru
 
                   (headline1, headline2, regression, classification | regression) is yielded
 
-      enforced: If True, then the same pair of headlines are yielded twice,
+      enforced: If True, then the same pair of headlines_project are yielded twice,
                 but the second pair is swapped  with labels and features (if valid)
                 changed accordingly.
 
@@ -66,17 +65,17 @@ def headlines_pair_generator(df, packages_ids, one_hot=False, classification=Tru
         random_headline_idxs = np.random.choice(len(package), 2, replace=False)
         y_raw = package.clicks.values[random_headline_idxs]
 
-        # Skip if both headlines have the same number of clicks
+        # Skip if both headlines_project have the same number of clicks
         if y_raw[0] == y_raw[1]:
             continue
 
-        # Get both headlines
+        # Get both headlines_project
         if not cased:
             h1, h2 = package["headline_lowercase"].values[random_headline_idxs].tolist()
         else:
             h1, h2 = package["headline"].values[random_headline_idxs].tolist()
 
-        # Skip if both headlines are the same
+        # Skip if both headlines_project are the same
         if h1 == h2:
             continue
 

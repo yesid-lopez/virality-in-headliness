@@ -1,11 +1,11 @@
-import tensorflow as tf
-from data.generators.pair import headlines_pair_generator
+from headlines_project.lib import *
+from .generator import headlines_pair_generator
 
 
 def create_data_pipeline(packages_ids, batch_sizes, max_length, encoder_fn, one_hot=False, classification=True,
                          cased=False, enforced=False):
     """
-    Constructs a tf.data pipeline that yields batches of pairs of headlines with corresponding label (classification,
+    Constructs a tf.data pipeline that yields batches of pairs of headlines_project with corresponding label (classification,
     regression).
 
     Args:
@@ -21,10 +21,10 @@ def create_data_pipeline(packages_ids, batch_sizes, max_length, encoder_fn, one_
                       1 ([0, 1] if one_hot=True) if first headline had more clicks than
                       the second headline, 0 ([1, 0] if one_hot=True) otherwise.
 
-        cased(bool): If True, yielded headlines will not be lowercased.
-             Otherwise, all headlines will be lowercased,
+        cased(bool): If True, yielded headlines_project will not be lowercased.
+             Otherwise, all headlines_project will be lowercased,
 
-        enforced: If True, then the same pair of headlines are yielded twice,
+        enforced: If True, then the same pair of headlines_project are yielded twice,
                 but the second pair is swapped  with labels and features (if valid)
                 changed accordingly.
     Returns:
