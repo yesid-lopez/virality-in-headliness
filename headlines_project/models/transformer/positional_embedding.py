@@ -42,13 +42,14 @@ class PositionalEmbedding(tf.keras.layers.Layer):
         """ 
         Computes embeddings for input tokens ids and apply them positional encoding
         Args:
-          input_tokens(tensor): tensor with shape (batch_size, max_length)
-          causal_attention(bool): If True, padding mask is combined with look ahead mask. 
+            input_tokens(tensor): tensor with shape (batch_size, max_length)
+            training(bool): whether is training or not
+            causal_attention(bool): If True, padding mask is combined with look ahead mask.
                                   Otherwise only padding mask is created. 
 
         Returns:
-          x: Positional encoded embeddings 
-          mask: Padding mask for Multi Head Attention (with lookahead, optionally)
+            x: Positional encoded embeddings
+            mask: Padding mask for Multi Head Attention (with lookahead, optionally)
         """
         max_length = tf.shape(input_tokens)[-1]
         mask = create_padding_mask(input_tokens)

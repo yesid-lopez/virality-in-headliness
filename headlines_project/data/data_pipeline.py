@@ -2,13 +2,14 @@ from headlines_project.lib import *
 from .generator import headlines_pair_generator
 
 
-def create_data_pipeline(packages_ids, batch_sizes, max_length, encoder_fn, one_hot=False, classification=True,
+def create_data_pipeline(df, packages_ids, batch_sizes, max_length, encoder_fn, one_hot=False, classification=True,
                          cased=False, enforced=False):
     """
     Constructs a tf.data pipeline that yields batches of pairs of headlines_project with corresponding label (classification,
     regression).
 
     Args:
+        df(pandas.DataFrame); DataFrame
         packages_ids(dict): dictionary that maps dataset split to list of packages ids. Keys: ["train". "val", "test"] 
         batch_sizes(dict): dictionary that maps dataset split to batch size. Keys: ["train", "val", "test"]
         max_length(int): Number of maximum tokens. Required for padding sequences.
@@ -56,10 +57,10 @@ def create_data_pipeline(packages_ids, batch_sizes, max_length, encoder_fn, one_
             "input_tokens_h1": padded_tokens1,
             "input_tokens_h2": padded_tokens1
         }
-        return inputs, y_reg, y_class
+        return inputs, y_class
 
     def single_data_generator_wrapper(ids, **kwargs):
-        generator = headlines_pair_generator(ids, **kwargs)
+        generator = headlines_pair_generator(df, ids, **kwargs)
         for inputs in generator:
             inputs, y_class = filter_label_and_tokenize(*inputs)
             yield inputs, y_class

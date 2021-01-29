@@ -33,7 +33,7 @@ def plot_attention_weights(transformer_encoder, encoded_sentences_tokens, token_
             non_padding_tokens_len = len(decoded_subwords)
 
             # plot the attention weights
-            ax = axs[ith_headline, jth_head] if n > 1 else axs[jth_head]
+            ax = axs[ith_headline, jth_head] if num_heads > 1 else axs[ith_headline]
             att = att_weights[ith_headline, jth_head, :non_padding_tokens_len, :non_padding_tokens_len]
             ax.matshow(att, cmap='viridis')
 

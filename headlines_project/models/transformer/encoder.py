@@ -4,10 +4,19 @@ from tensorflow.python.keras.layers import Dropout
 from .encoder_layer import TransformerEncoderLayer
 from .positional_embedding import PositionalEmbedding
 
-
 class TransformerEncoder(tf.keras.models.Model):
     def __init__(self, num_layers, d_model, num_heads, dff, embedding_layer,
                  causal_attention=False, dropout_rate=0.2):
+        """
+
+        :param num_layers:
+        :param d_model:
+        :param num_heads:
+        :param dff:
+        :param embedding_layer:
+        :param causal_attention:
+        :param dropout_rate:
+        """
         super(TransformerEncoder, self).__init__()
         self.d_model = d_model
         self.num_layers = num_layers
@@ -33,8 +42,7 @@ class TransformerEncoder(tf.keras.models.Model):
                               attention weights of shape (batch_size, num_heads, max_length, max_length)
                               for each layer as values 
         """
-        embeddings, mask = self.positional_embedding(input_tokens, training=training,
-                                                     causal_attention=self.causal_attention)
+        embeddings, mask = self.positional_embedding(input_tokens, training, causal_attention=self.causal_attention)
 
         x = self.dropout(embeddings, training=training)
 
